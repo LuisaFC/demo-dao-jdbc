@@ -22,7 +22,8 @@ public class Main {
                     "INSERT INTO seller " +
                     "(Name, Email, BirthDate, BaseSalary, DepartmentId) "
                     + "VALUES "
-                    + "(?, ?, ?, ?, ?)"
+                    + "(?, ?, ?, ?, ?)",
+                    Statement.RETURN_GENERATED_KEYS
             );
 
             //Substituindo cada interrogação por uma info
@@ -33,7 +34,17 @@ public class Main {
             pt.setInt(5, 4);
 
             int rowsAffected = pt.executeUpdate();
-            System.out.println("Done " + rowsAffected);
+
+            if(rowsAffected > 0){
+                rs = pt.getGeneratedKeys();
+                while (rs.next()){
+                    int id = rs.getInt(1);
+                    System.out.println("Done! Id = " + id);
+                }
+            } else{
+                System.out.println("No rows affected");
+            }
+
             st = conn.createStatement();
             rs = st.executeQuery("select * from department");
 
