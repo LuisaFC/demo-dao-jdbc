@@ -1,4 +1,5 @@
 import db.DB;
+import db.DbIntegrityException;
 
 import java.sql.*;
 import java.text.ParseException;
@@ -74,7 +75,7 @@ public class Main {
             }
         }
         catch (SQLException e){
-            e.printStackTrace();
+           throw new DbIntegrityException(e.getMessage());
         }
 //        catch (ParseException e){
 //         e.printStackTrace();
