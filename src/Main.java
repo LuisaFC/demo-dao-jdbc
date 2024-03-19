@@ -20,20 +20,31 @@ public class Main {
         try{
             conn = DB.getConnection();
 
+//            pt = conn.prepareStatement(
+//                    "INSERT INTO seller " +
+//                    "(Name, Email, BirthDate, BaseSalary, DepartmentId) "
+//                    + "VALUES "
+//                    + "(?, ?, ?, ?, ?)",
+//                    Statement.RETURN_GENERATED_KEYS
+//            );
+//
+//            //Substituindo cada interrogação por uma info
+//            pt.setString(1, "Carl Purple");
+//            pt.setString(2, "carl@email.com");
+//            pt.setDate(3, new java.sql.Date(sdf.parse("22/04/1995").getTime()));
+//            pt.setDouble(4, 3000.0);
+//            pt.setInt(5, 4);
+
             pt = conn.prepareStatement(
-                    "INSERT INTO seller " +
-                    "(Name, Email, BirthDate, BaseSalary, DepartmentId) "
-                    + "VALUES "
-                    + "(?, ?, ?, ?, ?)",
+                    "INSERT INTO department " +
+                        "(Name) "
+                        + "VALUES "
+                        + "(?)",
                     Statement.RETURN_GENERATED_KEYS
             );
 
-            //Substituindo cada interrogação por uma info
-            pt.setString(1, "Carl Purple");
-            pt.setString(2, "carl@email.com");
-            pt.setDate(3, new java.sql.Date(sdf.parse("22/04/1995").getTime()));
-            pt.setDouble(4, 3000.0);
-            pt.setInt(5, 4);
+            pt.setString(1, "D1");
+            pt.setString(1, "D2");
 
             pt = conn.prepareStatement(
                     "UPDATE seller "
@@ -44,7 +55,13 @@ public class Main {
             pt.setDouble(1, 200.0);
             pt.setInt(2, 2);
 
+            pt = conn.prepareStatement(
+                    "DELETE FROM department "
+                    + "WHERE "
+                    + "Id = ?"
+            );
 
+            pt.setInt(1, 5);
             int rowsAffected = pt.executeUpdate();
 
             System.out.println("Done! Rows affected: " + rowsAffected);
@@ -59,9 +76,9 @@ public class Main {
         catch (SQLException e){
             e.printStackTrace();
         }
-        catch (ParseException e){
-         e.printStackTrace();
-        }
+//        catch (ParseException e){
+//         e.printStackTrace();
+//        }
         finally {
             DB.closeStatement(pt);
             DB.closeResultSet(rs);
