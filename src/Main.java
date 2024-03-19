@@ -8,10 +8,12 @@ public class Main {
     public static void main(String[] args) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Connection conn = null;
+        //recuperar dados
         Statement st = null;
+        //em forma de tabela
         ResultSet rs = null;
 
-        //montar consulta sql deixando os parametros para depois
+        //montar consulta sql deixando os parametros para depois e atualizar dados
         PreparedStatement pt = null;
 
 
@@ -33,17 +35,19 @@ public class Main {
             pt.setDouble(4, 3000.0);
             pt.setInt(5, 4);
 
+            pt = conn.prepareStatement(
+                    "UPDATE seller "
+                            + "SET BaseSalary = BaseSalary + ? "
+                            + "WHERE "
+                            + "(DepartmentId = ?)");
+
+            pt.setDouble(1, 200.0);
+            pt.setInt(2, 2);
+
+
             int rowsAffected = pt.executeUpdate();
 
-            if(rowsAffected > 0){
-                rs = pt.getGeneratedKeys();
-                while (rs.next()){
-                    int id = rs.getInt(1);
-                    System.out.println("Done! Id = " + id);
-                }
-            } else{
-                System.out.println("No rows affected");
-            }
+            System.out.println("Done! Rows affected: " + rowsAffected);
 
             st = conn.createStatement();
             rs = st.executeQuery("select * from department");
