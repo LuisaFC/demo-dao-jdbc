@@ -1,4 +1,5 @@
 import db.DB;
+import db.DbException;
 import db.DbIntegrityException;
 
 import java.sql.*;
@@ -20,6 +21,9 @@ public class Main {
 
         try{
             conn = DB.getConnection();
+
+            //As alterações precisam de uma confirmação explicita do programador para serem salvas no banco de dados
+            conn.setAutoCommit(false);
 
 //            pt = conn.prepareStatement(
 //                    "INSERT INTO seller " +
@@ -70,12 +74,33 @@ public class Main {
             st = conn.createStatement();
             rs = st.executeQuery("select * from department");
 
+            int rowa1 = st.executeUpdate("UPDATE seller SET BaseSalary = 2900 WHERE DepartmentId = 1");
+
+            //erro no meio do caminho
+//            int x = 1;
+//            if( x < 2){
+//                throw new SQLException("Fake error");
+//            }
+            int rowa2 = st.executeUpdate("UPDATE seller SET BaseSalary = 3090 WHERE DepartmentId = 2");
+
+            //confirmação explicita
+            conn.commit();
+
+            System.out.println("rows1 " + rowa1);
+            System.out.println("rows2 " + rowa2);
+
             while (rs.next()){
                 System.out.println(rs.getInt("Id") + ", " + rs.getString("Name"));
             }
         }
         catch (SQLException e){
-           throw new DbIntegrityException(e.getMessage());
+            try {
+                //se ocorrer erro no meio do caminho então será feito rollback
+                conn.rollback();
+                throw new DbException("Transaction rolled back! Caused by: " + e.getMessage());
+            } catch (SQLException ex) {
+                throw new DbException("Eroor tryong to rollback! Caused by: " + ex.getMessage());
+            }
         }
 //        catch (ParseException e){
 //         e.printStackTrace();
